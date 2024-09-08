@@ -1,4 +1,4 @@
-﻿namespace Bookstore.WebApi.Models
+﻿namespace Bookstore.BL.Dto
 {
     using System;
 

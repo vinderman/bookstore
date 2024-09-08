@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Bookstore.WebApi.Models;
-using Bookstore.DAL.EF;
 using Bookstore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using Bookstore.BL.Interfaces;
+using Bookstore.BL.Dto;
 
 namespace Bookstore.WebApi.Controllers
 {
@@ -10,33 +10,26 @@ namespace Bookstore.WebApi.Controllers
     [Route("[controller]")]
     public class BookController: ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IBookService _bookService;
 
-        public BookController(AppDbContext context)
+        public BookController(IBookService bookService)
         {
-            _context = context;
+            _bookService = bookService;
         }
 
         [HttpGet]
-    	public ActionResult<BookDto> Get()
+    	public async Task<ActionResult<BookDto>> Get(Guid id)
     	{
-            var result = _context.Book.First();
+            var result = await _bookService.GetById(id);
             return Ok(result);
             
     	}
 
         [HttpPost]
-        public async Task<ActionResult<BookDto>> Create(BookDto request)
+        public async Task<ActionResult<BookDto>> Create(CreateBookDto request)
         {
 
-            var book = await _context.Book.AddAsync(new Book
-            {
-                title = request.title,
-                description = request.description,
-            });
-
-            await _context.SaveChangesAsync();
-            var createdBook = await _context.Book.FirstOrDefaultAsync(b => b.title == request.title);
+            var createdBook = await _bookService.Create(request);
 
             return Ok(createdBook);
         }
