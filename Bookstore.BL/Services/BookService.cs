@@ -19,9 +19,9 @@ namespace Bookstore.BL
             // Добавить маппер
             return new BookDto
             {
-                id = book.id,
-                title = book.title,
-                description = book.description,
+                id = book.Id,
+                title = book.Title,
+                description = book.Description,
             };
         }
 
@@ -29,16 +29,16 @@ namespace Bookstore.BL
         {
             var book = await _bookRepository.Create(new Book
             {
-                description = request.description,
-                title = request.title,
+                Description = request.description,
+                Title = request.title,
             });
 
 
             return new BookDto
             {
-                id = book.id,
-                title = book.title,
-                description = book.description, 
+                id = book.Id,
+                title = book.Title,
+                description = book.Description, 
             };
         }
     }

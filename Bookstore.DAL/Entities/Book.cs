@@ -1,17 +1,19 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
-namespace Bookstore.DAL.Entities
+namespace Bookstore.DAL.Entities;
+
+public partial class Book
 {
-    public class Book
-    {
-        [Key]
-        public Guid id { get; set; }
+    public Guid Id { get; set; }
 
-        public string title { get; set; } = String.Empty;
+    public string? Title { get; set; }
 
-        public string description { get; set; } = String.Empty;
-    }
+    public string? Description { get; set; }
+
+    public Guid? Authorid { get; set; }
+
+    public virtual Author? Author { get; set; }
+
+    public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
 }
-

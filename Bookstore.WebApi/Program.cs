@@ -1,4 +1,5 @@
 using Bookstore.DI;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Внедрение зависимостей
-DependencyInjector.InjectDependencies(builder.Services);
+// Dependency Injection
+DependencyInjector.InjectDependencies(builder.Services, builder.Configuration);
 
 
 var app = builder.Build();

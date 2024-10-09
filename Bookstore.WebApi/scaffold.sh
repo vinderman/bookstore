@@ -1,0 +1,2 @@
+#Scaffold-DbContext "Host=127.0.0.1;Port=5432;Database=bookstore;Username=backend;Password=12345" Npgsql.EntityFrameworkCore.PostgreSQL -o Models 
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:Default" -f Npgsql.EntityFrameworkCore.PostgreSQL -o ../Bookstore.DAL/Entities -c AppDbContext --context-dir ../Bookstore.DAL.EF --namespace Bookstore.DAL.Entities --context-namespace Bookstore.DAL.EF
