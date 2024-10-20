@@ -22,11 +22,17 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Genre> Genres { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:Default");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder
+            .HasPostgresExtension("pgcrypto")
+            .HasPostgresExtension("uuid-ossp");
+
         modelBuilder.Entity<Author>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("author_pkey");
@@ -34,7 +40,7 @@ public partial class AppDbContext : DbContext
             entity.ToTable("author");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.Name).HasColumnName("name");
         });
@@ -46,7 +52,7 @@ public partial class AppDbContext : DbContext
             entity.ToTable("book");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.Authorid).HasColumnName("authorid");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -56,6 +62,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books)
                 .HasForeignKey(d => d.Authorid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("book_author_id");
 
             entity.HasMany(d => d.Genres).WithMany(p => p.Books)
@@ -85,9 +92,38 @@ public partial class AppDbContext : DbContext
             entity.ToTable("genre");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.Title).HasColumnName("title");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("users_pkey");
+
+            entity.ToTable("users");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasColumnName("email");
+            entity.Property(e => e.Firstname)
+                .HasMaxLength(30)
+                .HasColumnName("firstname");
+            entity.Property(e => e.Lastname)
+                .HasMaxLength(30)
+                .HasColumnName("lastname");
+            entity.Property(e => e.Login)
+                .HasMaxLength(30)
+                .HasColumnName("login");
+            entity.Property(e => e.Middlename)
+                .HasMaxLength(30)
+                .HasColumnName("middlename");
+            entity.Property(e => e.Password)
+                .HasMaxLength(30)
+                .HasColumnName("password");
         });
 
         OnModelCreatingPartial(modelBuilder);

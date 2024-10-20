@@ -4,13 +4,13 @@
 
     public class BookDto
     {
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public string title { get; set; } = String.Empty;
+        public string Title { get; set; } = String.Empty;
 
-        public string description { get; set; } = String.Empty;
+        public string Description { get; set; } = String.Empty;
 
-        public Guid authorId { get; set; }
+        public Guid AuthorId { get; set; }
     }
 
 }

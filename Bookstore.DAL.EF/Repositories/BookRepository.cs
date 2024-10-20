@@ -6,27 +6,25 @@ namespace Bookstore.DAL.EF.Repositories
 {
 	public class BookRepository: IBookRepository
 	{
-		AppDbContext _context;
+		AppDbContext _dbContext;
 
-		public BookRepository(AppDbContext context) {
-			_context = context;
+		public BookRepository(AppDbContext dbContext) {
+            _dbContext = dbContext;
 		}
 
 		public async Task<Book> GetById(Guid id)
 		{
-			var book = await _context.Books.FirstOrDefaultAsync(book => book.Id == id);
+			var book = await _dbContext.Books.FirstOrDefaultAsync(book => book.Id == id);
 
 			return book;
 		}
 
 		public async Task<Book> Create(Book book)
 		{
-			var result = await _context.Books.AddAsync(book);
-			await _context.SaveChangesAsync();
+			await _dbContext.Books.AddAsync(book);
+			await _dbContext.SaveChangesAsync();
 
-			var createdBook = await _context.Books.FirstOrDefaultAsync(b => b.Title == book.Title);
-
-			return createdBook;
+			return book;
 		}
 	}
 }

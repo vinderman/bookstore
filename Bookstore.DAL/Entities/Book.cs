@@ -11,9 +11,9 @@ public partial class Book
 
     public string? Description { get; set; }
 
-    public Guid? Authorid { get; set; }
+    public Guid Authorid { get; set; }
 
-    public virtual Author? Author { get; set; }
+    public virtual Author Author { get; set; } = null!;
 
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
 }

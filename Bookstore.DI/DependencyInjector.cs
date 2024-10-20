@@ -1,5 +1,6 @@
 ﻿using Bookstore.BL;
 using Bookstore.BL.Interfaces;
+using Bookstore.BL.Services;
 using Bookstore.DAL.EF;
 using Bookstore.DAL.EF.Repositories;
 using Bookstore.DAL.Interfaces;
@@ -16,8 +17,20 @@ namespace Bookstore.DI
             services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("Default")));
 
-            services.AddTransient<IBookRepository, BookRepository>();
-            services.AddTransient<IBookService, BookService>();
+            InjectRepositories(services);
+            InjectServices(services);
+        }
+
+        public static void InjectRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+        }
+
+        public static void InjectServices(IServiceCollection services)
+        {
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAuthorService, AuthorService>();
         }
     }
 }

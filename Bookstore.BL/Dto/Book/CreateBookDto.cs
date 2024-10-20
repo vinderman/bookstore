@@ -2,10 +2,10 @@ namespace Bookstore.BL.Dto
 {
     public class CreateBookDto
     {
-        public string title { get; set; }
+        public string Title { get; set; }
 
-        public string description { get; set; }
+        public string Description { get; set; }
 
-        public Guid authorId { get; set; }
+        public Guid AuthorId { get; set; }
     }
 }
