@@ -22,6 +22,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Genre> Genres { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -37,7 +39,7 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("author_pkey");
 
-            entity.ToTable("author");
+            entity.ToTable("authors");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
@@ -49,19 +51,19 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("books_pkey");
 
-            entity.ToTable("book");
+            entity.ToTable("books");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Authorid).HasColumnName("authorid");
+            entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Title)
+            entity.Property(e => e.Name)
                 .HasColumnType("character varying")
-                .HasColumnName("title");
+                .HasColumnName("name");
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books)
-                .HasForeignKey(d => d.Authorid)
+                .HasForeignKey(d => d.AuthorId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("book_author_id");
 
@@ -69,19 +71,19 @@ public partial class AppDbContext : DbContext
                 .UsingEntity<Dictionary<string, object>>(
                     "BookGenre",
                     r => r.HasOne<Genre>().WithMany()
-                        .HasForeignKey("Genreid")
+                        .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("book_genre_genreid_fkey"),
                     l => l.HasOne<Book>().WithMany()
-                        .HasForeignKey("Bookid")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("book_genre_bookid_fkey"),
                     j =>
                     {
-                        j.HasKey("Bookid", "Genreid").HasName("book_genre_pkey");
+                        j.HasKey("BookId", "GenreId").HasName("book_genre_pkey");
                         j.ToTable("book_genre");
-                        j.IndexerProperty<Guid>("Bookid").HasColumnName("bookid");
-                        j.IndexerProperty<Guid>("Genreid").HasColumnName("genreid");
+                        j.IndexerProperty<Guid>("BookId").HasColumnName("book_id");
+                        j.IndexerProperty<Guid>("GenreId").HasColumnName("genre_id");
                     });
         });
 
@@ -89,12 +91,26 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("genre_pkey");
 
-            entity.ToTable("genre");
+            entity.ToTable("genres");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Name).HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("roles_pkey");
+
+            entity.ToTable("roles");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(30)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -124,6 +140,12 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(30)
                 .HasColumnName("password");
+            entity.Property(e => e.Roleid).HasColumnName("roleid");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.User)
+                .HasForeignKey<User>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("users_roles_fk");
         });
 
         OnModelCreatingPartial(modelBuilder);

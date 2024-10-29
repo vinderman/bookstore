@@ -25,12 +25,15 @@ namespace Bookstore.DI
         {
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
         }
 
         public static void InjectServices(IServiceCollection services)
         {
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IRoleService, RoleService>();
         }
     }
 }

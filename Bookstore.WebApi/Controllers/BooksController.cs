@@ -8,16 +8,16 @@ namespace Bookstore.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class BookController: ControllerBase
+    public class BooksController: ControllerBase
     {
         private readonly IBookService _bookService;
 
-        public BookController(IBookService bookService)
+        public BooksController(IBookService bookService)
         {
             _bookService = bookService;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
     	public async Task<ActionResult<BookDto>> Get(Guid id)
     	{
             var result = await _bookService.GetById(id);

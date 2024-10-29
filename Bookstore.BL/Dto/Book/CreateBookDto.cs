@@ -1,8 +1,8 @@
-namespace Bookstore.BL.Dto
+﻿namespace Bookstore.BL.Dto
 {
     public class CreateBookDto
     {
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         public string Description { get; set; }
 
