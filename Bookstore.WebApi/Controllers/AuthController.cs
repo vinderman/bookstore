@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using Bookstore.BL.Dto.Auth;
+using Bookstore.BL.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
 namespace Bookstore.WebApi.Controllers
@@ -11,59 +10,32 @@ namespace Bookstore.WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration config)
+        public AuthController(IConfiguration config, IAuthService authService)
         {
             _config = config;
+            _authService = authService;
         }
 
-        // TODO: Дописать DTO, сделать валидацию
         [HttpPost("login")]
-        public IActionResult Login(string userLogin)
+        public async Task<ActionResult<AuthByLoginResponseDto>> Login([FromBody] AuthByLoginDto authByLoginDto)
         {
-            if (userLogin == null || (userLogin != "admin" && userLogin != "user"))
+            try
             {
-                return Unauthorized("Привет");
+                var result = await _authService.Login(authByLoginDto);
+
+                if (result == null)
+                {
+                    return BadRequest("Произошла ошибка. Проверьте учетные данные");
+                }
+
+                return Ok(result);
             }
-
-
-            var token = GenerateJwtToken(userLogin);
-            return Ok(new { token });
-
+            catch
+            {
+                throw;
+            }
         }
-
-        private string GenerateJwtToken(string userLogin)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            // Add roles to the claims
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, userLogin),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            if (userLogin == "admin")
-            {
-                claims.Append(new Claim(ClaimTypes.Role, "Admin"));
-            }
-            else
-            {
-                claims.Append(new Claim(ClaimTypes.Role, "User"));
-            }
-
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"])),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        // Добавить refreshToken
     }
 }

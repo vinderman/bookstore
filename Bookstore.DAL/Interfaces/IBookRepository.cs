@@ -1,4 +1,4 @@
-using Bookstore.DAL.Entities;
+﻿using Bookstore.DAL.Entities;
 
 namespace Bookstore.DAL.Interfaces
 {

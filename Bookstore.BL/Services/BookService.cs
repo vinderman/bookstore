@@ -1,14 +1,15 @@
-using Bookstore.BL.Interfaces;
+Ôªøusing Bookstore.BL.Interfaces;
 using Bookstore.BL.Dto;
 using Bookstore.DAL.Entities;
 using Bookstore.DAL.Interfaces;
 
 namespace Bookstore.BL
 {
-    public class BookService: IBookService
+    public class BookService : IBookService
     {
         private readonly IBookRepository _bookRepository;
-        public BookService(IBookRepository bookRepository) { 
+        public BookService(IBookRepository bookRepository)
+        {
             _bookRepository = bookRepository;
         }
 
@@ -16,11 +17,11 @@ namespace Bookstore.BL
         {
             var book = await _bookRepository.GetById(id);
 
-            // ƒÓ·‡‚ËÚ¸ Ï‡ÔÔÂ
+            // –î–æ–±–∞–≤–∏—Ç—å –º–∞–ø–ø–µ—Ä
             return new BookDto
             {
                 Id = book.Id,
-                Title = book.Title,
+                Title = book.Name,
                 Description = book.Description,
             };
         }
@@ -30,15 +31,15 @@ namespace Bookstore.BL
             var book = await _bookRepository.Create(new Book
             {
                 Description = request.Description,
-                Title = request.Title,
+                Name = request.Name,
             });
 
 
             return new BookDto
             {
                 Id = book.Id,
-                Title = book.Title,
-                Description = book.Description, 
+                Title = book.Name,
+                Description = book.Description,
             };
         }
     }

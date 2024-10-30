@@ -7,7 +7,7 @@ public partial class User
 {
     public Guid Id { get; set; }
 
-    public string? Login { get; set; }
+    public string Login { get; set; } = null!;
 
     public string? Email { get; set; }
 
@@ -18,4 +18,8 @@ public partial class User
     public string? Middlename { get; set; }
 
     public string Password { get; set; } = null!;
+
+    public Guid Roleid { get; set; }
+
+    public virtual Role IdNavigation { get; set; } = null!;
 }

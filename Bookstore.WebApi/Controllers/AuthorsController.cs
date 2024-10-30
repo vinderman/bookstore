@@ -9,11 +9,11 @@ namespace Bookstore.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AuthorController : ControllerBase
+    public class AuthorsController : ControllerBase
     {
         private readonly IAuthorService _authorService;
 
-        public AuthorController(IAuthorService authorService)
+        public AuthorsController(IAuthorService authorService)
         {
             _authorService = authorService;
         }
