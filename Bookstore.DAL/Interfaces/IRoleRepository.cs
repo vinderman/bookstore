@@ -1,6 +1,6 @@
 ﻿using Bookstore.DAL.Entities;
 namespace Bookstore.DAL.Interfaces;
-public interface IRoleRepository
+public interface IRoleRepository : IRepository<Role>
 {
-    Task<IEnumerable<Role>> GetAll();
+
 }

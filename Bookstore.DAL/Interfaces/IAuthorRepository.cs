@@ -1,9 +1,7 @@
 ﻿using Bookstore.DAL.Entities;
 
-namespace Bookstore.DAL.Interfaces
+namespace Bookstore.DAL.Interfaces;
+
+public interface IAuthorRepository : IRepository<Author>
 {
-    public interface IAuthorRepository
-    {
-        Task<Author> Create(Author author);
-    }
 }

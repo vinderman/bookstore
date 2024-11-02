@@ -3,44 +3,55 @@ using Bookstore.BL.Dto;
 using Bookstore.DAL.Entities;
 using Bookstore.DAL.Interfaces;
 
-namespace Bookstore.BL
+namespace Bookstore.BL.Services;
+
+public class BookService : IBookService
 {
-    public class BookService : IBookService
+    private readonly IBookRepository _bookRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    public BookService(IBookRepository bookRepository, IUnitOfWork unitOfWork)
     {
-        private readonly IBookRepository _bookRepository;
-        public BookService(IBookRepository bookRepository)
+        _bookRepository = bookRepository;
+        _unitOfWork = unitOfWork;
+
+    }
+
+    public async Task<BookDto> GetById(Guid id)
+    {
+        var book = await _bookRepository.GetByIdAsync(id);
+
+        if (book == null)
         {
-            _bookRepository = bookRepository;
+            throw new KeyNotFoundException("Книги с данным идентификатором не найдено");
         }
 
-        public async Task<BookDto> GetById(Guid id)
+        // Добавить маппер
+        return new BookDto
         {
-            var book = await _bookRepository.GetById(id);
+            Id = book.Id,
+            Title = book.Name,
+            Description = book.Description,
+        };
+    }
 
-            // Добавить маппер
-            return new BookDto
-            {
-                Id = book.Id,
-                Title = book.Name,
-                Description = book.Description,
-            };
-        }
-
-        public async Task<BookDto> Create(CreateBookDto request)
+    public async Task<BookDto> Create(CreateBookDto request)
+    {
+        var book = new Book
         {
-            var book = await _bookRepository.Create(new Book
-            {
-                Description = request.Description,
-                Name = request.Name,
-            });
+            Description = request.Description,
+            Name = request.Name,
+        };
+
+        await _unitOfWork.BeginTransactionAsync();
+        await _bookRepository.AddAsync(book);
+        await _unitOfWork.CommitTransactionAsync();
 
 
-            return new BookDto
-            {
-                Id = book.Id,
-                Title = book.Name,
-                Description = book.Description,
-            };
-        }
+        return new BookDto
+        {
+            Id = book.Id,
+            Title = book.Name,
+            Description = book.Description,
+        };
     }
 }
