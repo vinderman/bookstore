@@ -1,44 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Bookstore.DAL.Entities;
-using Microsoft.EntityFrameworkCore;
 using Bookstore.BL.Interfaces;
 using Bookstore.BL.Dto;
 using Bookstore.BL.Dto.Role;
 
-namespace Bookstore.WebApi.Controllers
+namespace Bookstore.WebApi.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class RolesController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class RolesController : ControllerBase
+    private readonly IRoleService _roleService;
+
+    public RolesController(IRoleService roleService)
     {
-        private readonly IRoleService _roleService;
+        _roleService = roleService;
+    }
 
-        public RolesController(IRoleService roleService)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<RoleDto>>> GetAll()
+    {
+        try
         {
-            _roleService = roleService;
-        }
+            var roles = await _roleService.GetRoles();
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> GetAll()
-        {
-            try
+            if (roles == null)
             {
-                var roles = await _roleService.GetRoles();
-
-                if (roles == null)
-                {
-                    return BadRequest("Произошла ошибка. Проверьте учетные данные");
-                }
-
-                return Ok(roles);
-            }
-            catch
-            {
-                throw;
+                return BadRequest("Произошла ошибка. Проверьте учетные данные");
             }
 
-
-
+            return Ok(roles);
         }
+        catch
+        {
+            throw;
+        }
+
+
+
     }
 }

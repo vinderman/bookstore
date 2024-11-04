@@ -1,41 +1,52 @@
 ﻿using Bookstore.BL.Dto.Auth;
 using Bookstore.BL.Interfaces;
+using Bookstore.Shared.Exceptions;
+using Bookstore.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
-namespace Bookstore.WebApi.Controllers
+namespace Bookstore.WebApi.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IConfiguration _config;
+    private readonly IAuthService _authService;
+
+    public AuthController(IConfiguration config, IAuthService authService)
     {
-        private readonly IConfiguration _config;
-        private readonly IAuthService _authService;
+        _config = config;
+        _authService = authService;
+    }
 
-        public AuthController(IConfiguration config, IAuthService authService)
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthByLoginResponseDto>> Login([FromBody] AuthByLoginDto authByLoginDto)
+    {
+        try
         {
-            _config = config;
-            _authService = authService;
-        }
+            var result = await _authService.Login(authByLoginDto);
 
-        [HttpPost("login")]
-        public async Task<ActionResult<AuthByLoginResponseDto>> Login([FromBody] AuthByLoginDto authByLoginDto)
+            if (result == null)
+            {
+                return BadRequest("Произошла ошибка. Проверьте учетные данные");
+            }
+
+            return Ok(result);
+        }
+        catch
         {
-            try
-            {
-                var result = await _authService.Login(authByLoginDto);
-
-                if (result == null)
-                {
-                    return BadRequest("Произошла ошибка. Проверьте учетные данные");
-                }
-
-                return Ok(result);
-            }
-            catch
-            {
-                throw;
-            }
+            throw;
         }
+    }
+
+    [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse<bool>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ErrorResponse))]
+    public async Task<ActionResult<bool>> Register([FromBody] RegisterDto registerDto)
+    {
+        var result = await _authService.Register(registerDto);
+        return Ok(result);
+
     }
 }

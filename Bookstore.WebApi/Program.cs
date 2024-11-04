@@ -6,6 +6,8 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using System.Text.Json;
+using Bookstore.WebApi.Middlewares;
+using Bookstore.WebApi.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,8 @@ builder.Services.Configure<RouteOptions>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SupportNonNullableReferenceTypes();
+    c.SchemaFilter<RequiredNotNullableSchemaFilter>();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Заголовок Authorization использует схему Bearer. Для авторизации используйте шаблон: \"Bearer {token}\"",
@@ -71,6 +75,7 @@ DependencyInjector.InjectDependencies(builder.Services, builder.Configuration);
 var app = builder.Build();
 
 
+app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -78,6 +83,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
