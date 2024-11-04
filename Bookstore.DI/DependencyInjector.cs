@@ -1,5 +1,4 @@
-﻿using Bookstore.BL;
-using Bookstore.BL.Interfaces;
+﻿using Bookstore.BL.Interfaces;
 using Bookstore.BL.Services;
 using Bookstore.DAL.EF;
 using Bookstore.DAL.EF.Repositories;
@@ -30,6 +29,7 @@ namespace Bookstore.DI
 
         public static void InjectServices(IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IAuthService, AuthService>();

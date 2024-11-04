@@ -12,7 +12,7 @@ public class RoleService : IRoleService
     }
     public async Task<IEnumerable<RoleDto>> GetRoles()
     {
-        var roles = await _roleRepository.GetAll();
+        var roles = await _roleRepository.GetAllAsync();
 
         return roles.Select(s => new RoleDto { Id = s.Id, Name = s.Name });
     }

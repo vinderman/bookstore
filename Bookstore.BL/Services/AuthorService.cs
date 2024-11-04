@@ -5,29 +5,31 @@ using Bookstore.DAL.Interfaces;
 
 namespace Bookstore.BL.Services
 {
-    public class AuthorService: IAuthorService
+    public class AuthorService : IAuthorService
     {
         IAuthorRepository _authorRepository;
+        IUnitOfWork _unitOfWork;
 
-        public AuthorService(IAuthorRepository authorRepository)
+        public AuthorService(IAuthorRepository authorRepository, IUnitOfWork unitOfWork)
         {
             _authorRepository = authorRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<AuthorDto> Create(CreateAuthorDto authorDto)
         {
-            var result = await _authorRepository.Create(new Author
+            var author = new Author
             {
                 Name = authorDto.Name,
-            });
-
-            if (result == null)
-            {
-                throw new Exception("Не удалось создать автора");
-            }
+            };
 
 
-            return new AuthorDto { Name = result.Name, Id = result.Id };
+            await _unitOfWork.BeginTransactionAsync();
+            await _authorRepository.AddAsync(author);
+            await _unitOfWork.CommitTransactionAsync();
+
+
+            return new AuthorDto { Name = author.Name, Id = author.Id };
         }
     }
 }
