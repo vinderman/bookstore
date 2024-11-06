@@ -12,4 +12,6 @@ public class RegisterDto
     public string? Middlename { get; set; } = String.Empty;
 
     public string Password { get; set; } = String.Empty;
+
+    public Guid RoleId { get; set; }
 }
