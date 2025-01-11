@@ -11,6 +11,9 @@ using Bookstore.WebApi.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+                options.AddPolicy("any", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -74,6 +77,10 @@ DependencyInjector.InjectDependencies(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("any");
+}
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();

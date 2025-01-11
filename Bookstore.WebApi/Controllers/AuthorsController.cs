@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Bookstore.WebApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AuthorsController : ControllerBase
 {
     private readonly IAuthorService _authorService;

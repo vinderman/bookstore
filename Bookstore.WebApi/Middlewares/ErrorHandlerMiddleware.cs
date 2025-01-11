@@ -20,7 +20,7 @@ public class ErrorHandlerMiddleware
         }
         catch (DuplicateException ex)
         {
-            var response = new ErrorResponse { Message = "123" , Description = ex.Message};
+            var response = new ErrorResponse { Message = "123", Description = ex.Message };
 
             context.Response.StatusCode = StatusCodes.Status409Conflict;
             await context.Response.WriteAsJsonAsync(response);
@@ -28,7 +28,7 @@ public class ErrorHandlerMiddleware
 
         catch (BadRequestException ex)
         {
-            if (ex.Errors.Count > 0)
+            if (ex.Errors?.Count > 0)
             {
                 var response = new ErrorResponse { Message = "Заполнены не все обязательные поля", Errors = ex.Errors, Description = ex.ToString() };
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -41,6 +41,13 @@ public class ErrorHandlerMiddleware
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsJsonAsync(response);
             }
+        }
+
+        catch (NotFoundException ex)
+        {
+            var response = new ErrorResponse { Message = ex.Message, Description = ex.ToString() };
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsJsonAsync(response);
         }
 
         catch (Exception ex)

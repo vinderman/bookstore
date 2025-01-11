@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bookstore.WebApi.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
@@ -20,6 +20,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [ActionName("AuthByLogin")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse<AuthByLoginResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorResponse))]
     public async Task<ActionResult<AuthByLoginResponseDto>> Login([FromBody] AuthByLoginDto authByLoginDto)
     {
         try

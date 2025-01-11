@@ -17,20 +17,44 @@ namespace Bookstore.BL.Services
         private readonly IConfiguration _config;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
-        public AuthService(IConfiguration config, IUnitOfWork unitOfWork, IUserRepository userRepository)
+        private readonly IRoleRepository _roleRepository;
+        public AuthService(IConfiguration config, IUnitOfWork unitOfWork, IUserRepository userRepository, IRoleRepository roleRepository)
         {
             _config = config;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
         }
 
-        // TODO: implement
         public async Task<AuthByLoginResponseDto> Login(AuthByLoginDto authByLoginDto)
         {
-            // Создать репозиторий User, реализовать метод для поиска в бд по логину.
-            // Проверить соответствие паролей
-            // Если совпадение найдено, вернуть GenerateJwtToken с соответствующей ролью
-            return null;
+            var user = await _userRepository.GetByLoginAsync(authByLoginDto.Login);
+
+            if (user == null)
+            {
+                throw new NotFoundException("Пользователя с данным login не найдено");
+            }
+
+            if (user.Password != authByLoginDto.Password)
+            {
+                throw new BadRequestException("Указан неверный пароль");
+            }
+
+            var role = await _roleRepository.GetByIdAsync(user.RoleId) ?? throw new BadRequestException("Недопустимая роль пользователя");
+
+            user.Role = role;
+            var token = GenerateJwtToken(user);
+
+
+            return new AuthByLoginResponseDto
+            {
+                AccessToken = token,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                MiddleName = user.MiddleName,
+                RoleName = user.Role.Name
+            };
         }
 
         public async Task<bool> Register(RegisterDto registerDto)
@@ -62,7 +86,7 @@ namespace Bookstore.BL.Services
             return true;
         }
 
-        private string GenerateJwtToken(string userLogin)
+        private string GenerateJwtToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -70,11 +94,11 @@ namespace Bookstore.BL.Services
             // Add roles to the claims
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userLogin),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Login),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            if (userLogin == "admin")
+            if (user.Role.Name == "admin")
             {
                 claims.Append(new Claim(ClaimTypes.Role, "Admin"));
             }

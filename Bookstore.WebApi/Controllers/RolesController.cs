@@ -6,7 +6,7 @@ using Bookstore.BL.Dto.Role;
 namespace Bookstore.WebApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class RolesController : ControllerBase
 {
     private readonly IRoleService _roleService;

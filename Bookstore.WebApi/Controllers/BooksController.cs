@@ -5,7 +5,7 @@ using Bookstore.BL.Dto;
 namespace Bookstore.WebApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
