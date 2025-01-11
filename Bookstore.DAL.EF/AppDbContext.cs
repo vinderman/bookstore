@@ -120,30 +120,30 @@ public partial class AppDbContext : DbContext
             entity.ToTable("users");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasColumnName("email");
-            entity.Property(e => e.Firstname)
+            entity.Property(e => e.FirstName)
                 .HasMaxLength(30)
-                .HasColumnName("firstname");
-            entity.Property(e => e.Lastname)
+                .HasColumnName("first_name");
+            entity.Property(e => e.LastName)
                 .HasMaxLength(30)
-                .HasColumnName("lastname");
+                .HasColumnName("last_name");
             entity.Property(e => e.Login)
                 .HasMaxLength(30)
                 .HasColumnName("login");
-            entity.Property(e => e.Middlename)
+            entity.Property(e => e.MiddleName)
                 .HasMaxLength(30)
-                .HasColumnName("middlename");
+                .HasColumnName("middle_name");
             entity.Property(e => e.Password)
                 .HasMaxLength(30)
                 .HasColumnName("password");
-            entity.Property(e => e.Roleid).HasColumnName("roleid");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
 
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.User)
-                .HasForeignKey<User>(d => d.Id)
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("users_roles_fk");
         });
