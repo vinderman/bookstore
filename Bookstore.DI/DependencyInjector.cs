@@ -36,6 +36,7 @@ namespace Bookstore.DI
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

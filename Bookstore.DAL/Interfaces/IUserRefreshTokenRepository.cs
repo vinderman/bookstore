@@ -3,5 +3,5 @@
 namespace Bookstore.DAL.Interfaces;
 public interface IUserRefreshTokenRepository : IRepository<UsersRefreshToken>
 {
-    Task<UsersRefreshToken> FindAsync(string refreshToken);
+    Task<UsersRefreshToken?> FindAsync(string refreshToken);
 }

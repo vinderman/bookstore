@@ -63,12 +63,7 @@ namespace Bookstore.BL.Services
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                ExpiresAt = token.ValidTo,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                MiddleName = user.MiddleName,
-                RoleName = user.Role.Name
+                ExpiresAt = token.ValidTo
             };
         }
 
