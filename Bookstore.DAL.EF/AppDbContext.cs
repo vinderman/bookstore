@@ -26,6 +26,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UsersRefreshToken> UsersRefreshTokens { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:Default");
 
@@ -146,6 +148,17 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("users_roles_fk");
+        });
+
+        modelBuilder.Entity<UsersRefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.RefreshToken).HasName("users_refresh_tokens_pkey");
+
+            entity.ToTable("users_refresh_tokens");
+
+            entity.Property(e => e.RefreshToken)
+                .HasColumnType("character varying")
+                .HasColumnName("refresh_token");
         });
 
         OnModelCreatingPartial(modelBuilder);

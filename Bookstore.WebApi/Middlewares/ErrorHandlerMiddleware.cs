@@ -50,6 +50,13 @@ public class ErrorHandlerMiddleware
             await context.Response.WriteAsJsonAsync(response);
         }
 
+        catch (ForbiddenException ex)
+        {
+            var response = new ErrorResponse { Message = ex.Message, Description = ex.ToString() };
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            await context.Response.WriteAsJsonAsync(response);
+        }
+
         catch (Exception ex)
         {
             // Handle other unhandled exceptions

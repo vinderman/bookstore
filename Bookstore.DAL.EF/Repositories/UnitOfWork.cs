@@ -17,6 +17,10 @@ namespace Bookstore.DAL.EF.Repositories
 
         public async Task BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadUncommitted)
         {
+            if (_transaction != null)
+            {
+                throw new InvalidOperationException("A transaction is already in progress.");
+            }
             _transaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel);
         }
 

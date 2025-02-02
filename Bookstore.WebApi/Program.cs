@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using Bookstore.WebApi.Middlewares;
 using Bookstore.WebApi.Common;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
         RoleClaimType = ClaimTypes.Role
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Default", new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build());
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>

@@ -6,4 +6,6 @@ public interface IAuthService
     Task<AuthByLoginResponseDto> Login(AuthByLoginDto loginDto);
 
     Task<bool> Register(RegisterDto registerDto);
+
+    Task<RefreshTokenResponseDto> RefreshToken(string refreshToken);
 }

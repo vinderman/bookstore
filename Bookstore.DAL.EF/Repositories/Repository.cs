@@ -18,7 +18,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         return await _context.Set<TEntity>().ToListAsync();
     }
 
-    public async Task<TEntity> GetByIdAsync(Guid id)
+    public async Task<TEntity?> GetByIdAsync(Guid id)
     {
         return await _context.Set<TEntity>().FindAsync(id);
     }

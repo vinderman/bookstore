@@ -4,13 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.DAL.EF.Repositories;
 
-public class UserRepository : Repository<User>, IUserRepository
+public class UserRepository(AppDbContext dbContext) : Repository<User>(dbContext), IUserRepository
 {
-    private readonly AppDbContext _dbContext;
-    public UserRepository(AppDbContext dbContext) : base(dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly AppDbContext _dbContext = dbContext;
 
     public async Task<User?> GetByLoginAsync(string login)
     {
