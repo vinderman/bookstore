@@ -1,9 +1,7 @@
 ﻿namespace Bookstore.BL.Dto.Auth;
 
-public class AuthByLoginResponseDto
+public class AuthByLoginResponseDto : RefreshTokenResponseDto
 {
-    public string AccessToken { get; set; }
-
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
 

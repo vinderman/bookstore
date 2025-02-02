@@ -26,6 +26,7 @@ namespace Bookstore.DI
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
         }
 
         public static void InjectServices(IServiceCollection services)

@@ -22,7 +22,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bookstore.BL", "Bookstore.B
 		{3FB86A63-56BA-4DAB-B5FF-A74168E1FC58} = {3FB86A63-56BA-4DAB-B5FF-A74168E1FC58}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookstore.Shared", "Bookstore.Shared\Bookstore.Shared.csproj", "{3FB86A63-56BA-4DAB-B5FF-A74168E1FC58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bookstore.Shared", "Bookstore.Shared\Bookstore.Shared.csproj", "{3FB86A63-56BA-4DAB-B5FF-A74168E1FC58}"
+	ProjectSection(ProjectDependencies) = postProject
+		{47CDC93D-186D-4ED9-8BDC-00A9F6E7C4B7} = {47CDC93D-186D-4ED9-8BDC-00A9F6E7C4B7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
