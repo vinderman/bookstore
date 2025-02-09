@@ -22,7 +22,7 @@ public class UsersController : ControllerBase
     [Route("currentUser")]
     public async Task<ActionResult<UserDto>> GetUserByToken()
     {
-        var token = HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+        var token = HttpContext.Request.Headers.Authorization.ToString().Split(' ')[1];
         var user = await _userService.GetUserByJwt(token);
 
         return Ok(user);
