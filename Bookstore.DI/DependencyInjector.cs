@@ -1,7 +1,8 @@
-﻿using Bookstore.BL.Interfaces;
+﻿using Bookstore.BL.BackgroundServices;
+using Bookstore.BL.Interfaces;
 using Bookstore.BL.Services;
-using Bookstore.DAL.EF;
-using Bookstore.DAL.EF.Repositories;
+using Bookstore.EF;
+using Bookstore.DAL.Repositories;
 using Bookstore.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ namespace Bookstore.DI
 
             InjectRepositories(services);
             InjectServices(services);
+            services.AddHostedService<RefreshTokenBackgroundService>();
         }
 
         public static void InjectRepositories(IServiceCollection services)
@@ -26,7 +28,9 @@ namespace Bookstore.DI
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
+            services.AddScoped<IDocumentRepository, DocumentRepository>();
         }
 
         public static void InjectServices(IServiceCollection services)
@@ -37,6 +41,7 @@ namespace Bookstore.DI
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGenreService, GenreService>();
         }
     }
 }

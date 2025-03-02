@@ -1,8 +1,9 @@
 ﻿using Bookstore.DAL.Entities;
 using Bookstore.DAL.Interfaces;
+using Bookstore.EF;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookstore.DAL.EF.Repositories;
+namespace Bookstore.DAL.Repositories;
 public class UserRefreshTokenRepository(AppDbContext dbContext) : Repository<UsersRefreshToken>(dbContext), IUserRefreshTokenRepository
 {
     private readonly AppDbContext _dbContext = dbContext;

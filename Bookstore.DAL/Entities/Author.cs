@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Bookstore.DAL.Entities;
 
-namespace Bookstore.DAL.Entities;
-
-public partial class Author
+public class Author
 {
     public Guid Id { get; set; }
 
