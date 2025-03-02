@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.DAL.EF.Repositories
 {
-    public class BookRepository : Repository<Book>, IBookRepository
+    public class BookRepository(AppDbContext dbContext) : Repository<Book>(dbContext), IBookRepository
     {
-        public BookRepository(AppDbContext dbContext) : base(dbContext) { }
     }
 }

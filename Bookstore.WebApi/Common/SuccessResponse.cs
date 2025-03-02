@@ -13,7 +13,7 @@ public class SuccessResponse<TData> : ApiResponse
     /// Результат запроса / детализация ошибки
     /// </summary>
     [JsonPropertyName("data")]
-    public TData? Data { get; set; }
+    public TData Data { get; set; }
 
     public SuccessResponse(TData data, string message = "")
     {

@@ -18,12 +18,19 @@ namespace Bookstore.BL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
-        public AuthService(IConfiguration config, IUnitOfWork unitOfWork, IUserRepository userRepository, IRoleRepository roleRepository)
+        private readonly IUserRefreshTokenRepository _userRefreshTokenRepository;
+        public AuthService(IConfiguration config,
+            IUnitOfWork unitOfWork,
+            IUserRepository userRepository,
+            IRoleRepository roleRepository,
+            IUserRefreshTokenRepository refreshTokenRepository
+            )
         {
             _config = config;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
+            _userRefreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<AuthByLoginResponseDto> Login(AuthByLoginDto authByLoginDto)
@@ -43,17 +50,20 @@ namespace Bookstore.BL.Services
             var role = await _roleRepository.GetByIdAsync(user.RoleId) ?? throw new BadRequestException("Недопустимая роль пользователя");
 
             user.Role = role;
-            var token = GenerateJwtToken(user);
+            var accessToken = GenerateAccessToken(user);
+            var refreshToken = GenerateRefreshToken(user);
 
+            await _unitOfWork.BeginTransactionAsync();
+            await _userRefreshTokenRepository.AddAsync(new UsersRefreshToken { RefreshToken = refreshToken });
+            await _unitOfWork.CommitTransactionAsync();
+
+            var token = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
 
             return new AuthByLoginResponseDto
             {
-                AccessToken = token,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                MiddleName = user.MiddleName,
-                RoleName = user.Role.Name
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresAt = token.ValidTo
             };
         }
 
@@ -86,7 +96,45 @@ namespace Bookstore.BL.Services
             return true;
         }
 
-        private string GenerateJwtToken(User user)
+        public async Task<RefreshTokenResponseDto> RefreshToken(string refreshToken)
+        {
+            try
+            {
+                var tokenDetails = new JwtSecurityTokenHandler().ReadJwtToken(refreshToken);
+                var expiration = tokenDetails.ValidTo;
+
+                var compareResult = DateTime.Compare(DateTime.Now, expiration);
+                if (compareResult > 0)
+                {
+                    throw new BadRequestException("Время жизни токена истекло");
+                }
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                var existingToken = await _userRefreshTokenRepository.FindAsync(refreshToken);
+
+                if (existingToken != null)
+                {
+                    var result = await ProcessRefreshToken(existingToken.RefreshToken);
+                    _userRefreshTokenRepository.Delete(existingToken);
+                    await _userRefreshTokenRepository.AddAsync(new UsersRefreshToken { RefreshToken = result.RefreshToken });
+
+                    await _unitOfWork.CommitTransactionAsync();
+                    return result;
+                }
+                else
+                {
+                    throw new BadRequestException("Токен не валиден");
+                }
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
+
+        }
+        private string GenerateAccessToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -118,6 +166,30 @@ namespace Bookstore.BL.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private string GenerateRefreshToken(User user)
+        {
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Login),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+
+            var refreshToken = new JwtSecurityToken(
+               issuer: _config["Jwt:Issuer"],
+               audience: _config["Jwt:Audience"],
+               expires: DateTime.Now.AddDays(Convert.ToDouble(_config["Jwt:RefreshExpireDays"])),
+               signingCredentials: credentials,
+               claims: claims
+           );
+
+
+            return new JwtSecurityTokenHandler().WriteToken(refreshToken);
+        }
         private void ValidateNewUser(RegisterDto registerDto)
         {
             Dictionary<string, string[]> errors = [];
@@ -151,6 +223,30 @@ namespace Bookstore.BL.Services
             {
                 throw new BadRequestException(errors);
             }
+        }
+
+
+        private async Task<RefreshTokenResponseDto> ProcessRefreshToken(string refreshToken)
+        {
+            var tokenDetails = new JwtSecurityTokenHandler().ReadJwtToken(refreshToken);
+            var userLogin = tokenDetails.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value!;
+            var user = await _userRepository.GetByLoginAsync(userLogin);
+
+            if (user != null)
+            {
+                var role = await _roleRepository.GetByIdAsync(user.RoleId) ?? throw new BadRequestException("Недопустимая роль пользователя");
+                user.Role = role;
+                var newAccessToken = GenerateAccessToken(user);
+                var newRefreshToken = GenerateRefreshToken(user);
+                var expiresAt = new JwtSecurityTokenHandler().ReadJwtToken(newAccessToken).ValidTo;
+
+                return new RefreshTokenResponseDto { RefreshToken = newRefreshToken, AccessToken = newAccessToken, ExpiresAt = expiresAt };
+            }
+            else
+            {
+                throw new NotFoundException("Соответствующий пользователь не найден");
+            }
+
         }
     }
 }

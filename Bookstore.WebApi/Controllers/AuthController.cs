@@ -20,7 +20,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    [ActionName("AuthByLogin")]
+    [ActionName("authByLogin")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse<AuthByLoginResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorResponse))]
@@ -52,5 +52,16 @@ public class AuthController : ControllerBase
         var result = await _authService.Register(registerDto);
         return Ok(result);
 
+    }
+
+    [HttpPost("refreshToken")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse<RefreshTokenResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(ErrorResponse))]
+    public async Task<ActionResult<RefreshTokenResponseDto>> RefreshToken(string refreshToken)
+    {
+        var result = await _authService.RefreshToken(refreshToken);
+
+        return Ok(result);
     }
 }
