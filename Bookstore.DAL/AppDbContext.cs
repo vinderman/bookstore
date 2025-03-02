@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using Bookstore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookstore.DAL.EF;
+namespace Bookstore.EF;
 
 public partial class AppDbContext : DbContext
 {
@@ -60,6 +59,12 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.FileId)
+                .HasColumnType("character varying")
+                .HasColumnName("file_id");
+            entity.Property(e => e.FileName)
+                .HasColumnType("character varying")
+                .HasColumnName("file_name");
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
@@ -69,24 +74,11 @@ public partial class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("book_author_id");
 
-            entity.HasMany(d => d.Genres).WithMany(p => p.Books)
-                .UsingEntity<Dictionary<string, object>>(
-                    "BookGenre",
-                    r => r.HasOne<Genre>().WithMany()
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("book_genre_genreid_fkey"),
-                    l => l.HasOne<Book>().WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("book_genre_bookid_fkey"),
-                    j =>
-                    {
-                        j.HasKey("BookId", "GenreId").HasName("book_genre_pkey");
-                        j.ToTable("book_genre");
-                        j.IndexerProperty<Guid>("BookId").HasColumnName("book_id");
-                        j.IndexerProperty<Guid>("GenreId").HasColumnName("genre_id");
-                    });
+            entity.HasMany(d => d.Genres).WithMany(p => p.Books).UsingEntity<Dictionary<string, object>>(
+                "book_genre",
+                j => j.HasOne<Genre>().WithMany().HasForeignKey("genre_id"),
+                j => j.HasOne<Book>().WithMany().HasForeignKey("book_id")
+            );
         });
 
         modelBuilder.Entity<Genre>(entity =>

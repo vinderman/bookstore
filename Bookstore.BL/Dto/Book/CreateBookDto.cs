@@ -1,4 +1,4 @@
-﻿namespace Bookstore.BL.Dto
+﻿namespace Bookstore.BL.Dto.Book
 {
     public class CreateBookDto
     {
@@ -7,5 +7,7 @@
         public string Description { get; set; }
 
         public Guid AuthorId { get; set; }
+
+        public IEnumerable<Guid> GenreIds { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bookstore.DAL.Entities;
 
-public partial class User
+public class User
 {
     public Guid Id { get; set; }
 

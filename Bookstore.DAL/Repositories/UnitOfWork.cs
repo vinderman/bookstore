@@ -2,17 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
+using Bookstore.EF;
 
-namespace Bookstore.DAL.EF.Repositories
+namespace Bookstore.DAL.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(AppDbContext dbContext) : IUnitOfWork
     {
-        private readonly AppDbContext _dbContext;
         private IDbContextTransaction _transaction;
-        public UnitOfWork(AppDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
 
 
         public async Task BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadUncommitted)
@@ -21,7 +17,7 @@ namespace Bookstore.DAL.EF.Repositories
             {
                 throw new InvalidOperationException("A transaction is already in progress.");
             }
-            _transaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel);
+            _transaction = await dbContext.Database.BeginTransactionAsync(isolationLevel);
         }
 
         public async Task CommitTransactionAsync()
@@ -31,7 +27,7 @@ namespace Bookstore.DAL.EF.Repositories
 
             try
             {
-                await _dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync();
                 await _transaction.CommitAsync();
             }
             catch
@@ -57,7 +53,7 @@ namespace Bookstore.DAL.EF.Repositories
 
         public void Dispose()
         {
-            _dbContext.Dispose();
+            dbContext.Dispose();
             DisposeTransactionAsync().GetAwaiter().GetResult();
         }
 

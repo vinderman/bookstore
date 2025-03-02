@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Bookstore.BL.Interfaces;
-using Bookstore.BL.Dto;
+using Bookstore.BL.Dto.Book;
 
 namespace Bookstore.WebApi.Controllers;
 
@@ -15,8 +15,16 @@ public class BooksController : ControllerBase
         _bookService = bookService;
     }
 
+    [HttpGet]
+    public async Task<IEnumerable<BookDto>> Get()
+    {
+        var result = await _bookService.GetBooks();
+
+        return result;
+    }
+
     [HttpGet("{id}")]
-    public async Task<ActionResult<BookDto>> Get(Guid id)
+    public async Task<ActionResult<BookDto>> Get([FromRoute] Guid id)
     {
         var result = await _bookService.GetById(id);
         return Ok(result);
@@ -30,6 +38,22 @@ public class BooksController : ControllerBase
         var createdBook = await _bookService.Create(request);
 
         return Ok(createdBook);
+    }
+
+    [HttpPost("{id}/file")]
+    public async Task<ActionResult<bool>> UploadFile([FromRoute] Guid id, [FromForm] UploadBookDto request)
+    {
+        var isUploaded = await _bookService.UploadBook(request.file, id);
+
+        return isUploaded;
+    }
+
+    [HttpGet("{id}/file")]
+    public async Task<ActionResult<bool>> DownloadFile([FromRoute] Guid id)
+    {
+        var downloadBookDto = await _bookService.DownloadBook(id);
+
+        return File(downloadBookDto.FileContent, "application/pdf", downloadBookDto.Name);
     }
 
 }
