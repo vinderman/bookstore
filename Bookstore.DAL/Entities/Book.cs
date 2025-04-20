@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Bookstore.DAL.Entities;
 
-public partial class Book
+public class Book
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
-    public string Name { get; set; } = null!;
+    [MaxLength(100)]
+    public string Name { get; init; }
 
-    public string Description { get; set; } = null!;
+    [MaxLength(300)]
+    public string Description { get; init; }
 
-    public Guid AuthorId { get; set; }
+    public Guid AuthorId { get; init; }
 
-    public virtual Author Author { get; set; } = null!;
+    [MaxLength(100)]
+    public string? FileId { get; init; }
 
-    public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
+    [MaxLength(100)]
+    public string? FileName { get; init; }
+
+    public Author Author { get; init; }
+    public ICollection<Genre> Genres { get; init; } = new List<Genre>();
 }

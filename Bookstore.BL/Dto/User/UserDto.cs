@@ -1,18 +1,20 @@
-﻿namespace Bookstore.BL.Dto.User;
+﻿using Bookstore.BL.Enums;
+
+namespace Bookstore.BL.Dto.User;
 
 public class UserDto
 {
     public Guid Id { get; set; }
 
-    public string Login { get; set; } = string.Empty;
+    public required string Login { get; set; }
 
     public string? Email { get; set; }
 
-    public string FirstName { get; set; } = string.Empty;
+    public required string FirstName { get; set; }
 
-    public string LastName { get; set; } = string.Empty;
+    public required string LastName { get; set; }
 
     public string? MiddleName { get; set; }
 
-    public Guid RoleId { get; set; }
+    public required UserRoleEnum RoleName { get; set; }
 }

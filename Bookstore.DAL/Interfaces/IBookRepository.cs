@@ -3,6 +3,5 @@
 namespace Bookstore.DAL.Interfaces
 {
     public interface IBookRepository : IRepository<Book>
-    {
-    }
+    {}
 }

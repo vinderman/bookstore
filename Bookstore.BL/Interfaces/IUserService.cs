@@ -1,5 +1,4 @@
 ﻿using Bookstore.BL.Dto.User;
-using Bookstore.DAL.Entities;
 
 namespace Bookstore.BL.Interfaces;
 

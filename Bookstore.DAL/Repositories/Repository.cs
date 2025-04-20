@@ -1,8 +1,9 @@
-﻿using Bookstore.DAL.EF;
+﻿using System.Linq.Expressions;
+using Bookstore.EF;
 using Bookstore.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookstore.DAL.EF.Repositories;
+namespace Bookstore.DAL.Repositories;
 
 public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
@@ -33,7 +34,17 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         _context.Set<TEntity>().Update(entity);
     }
 
-    public void Delete(TEntity entity)
+    public void UpdateProperties(TEntity entity, params Expression<Func<TEntity, object>>[] properties)
+    {
+        _context.Attach(entity);
+
+        foreach (var property in properties)
+        {
+            _context.Entry(entity).Property(property).IsModified = true;
+        }
+    }
+
+    public async Task Delete(TEntity entity)
     {
         _context.Set<TEntity>().Remove(entity);
     }

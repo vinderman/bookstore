@@ -8,4 +8,6 @@ public interface IAuthService
     Task<bool> Register(RegisterDto registerDto);
 
     Task<RefreshTokenResponseDto> RefreshToken(string refreshToken);
+
+    Task RemoveExpiredRefreshTokens();
 }

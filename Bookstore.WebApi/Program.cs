@@ -6,6 +6,7 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Bookstore.WebApi.Middlewares;
 using Bookstore.WebApi.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 builder.Services.Configure<RouteOptions>(options =>
@@ -53,6 +55,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SupportNonNullableReferenceTypes();
     c.SchemaFilter<RequiredNotNullableSchemaFilter>();
+    c.SchemaFilter<SwaggerEnumSchemaFilter>();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Заголовок Authorization использует схему Bearer. Для авторизации используйте шаблон: \"Bearer {token}\"",

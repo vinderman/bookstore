@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bookstore.DAL.EF\Bookstore.DAL.EF.csproj" />
+    <ProjectReference Include="..\Bookstore.DAL\Bookstore.DAL.csproj" />
     <ProjectReference Include="..\Bookstore.Shared\Bookstore.Shared.csproj" />
   </ItemGroup>
 

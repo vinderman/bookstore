@@ -134,6 +134,21 @@ namespace Bookstore.BL.Services
             }
 
         }
+
+        public async Task RemoveExpiredRefreshTokens()
+        {
+            var tokens = await _userRefreshTokenRepository.GetAllAsync();
+
+            tokens?.ToList().ForEach(x =>
+            {
+                var expiresAt = new JwtSecurityTokenHandler().ReadJwtToken(x.RefreshToken).ValidTo;
+
+                if (expiresAt < DateTime.Now)
+                {
+                    _userRefreshTokenRepository.Delete(x);
+                }
+            });
+        }
         private string GenerateAccessToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

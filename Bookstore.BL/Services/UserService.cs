@@ -1,8 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using Bookstore.BL.Dto.Role;
 using Bookstore.BL.Dto.User;
+using Bookstore.BL.Enums;
 using Bookstore.BL.Interfaces;
-using Bookstore.DAL.Entities;
 using Bookstore.DAL.Interfaces;
 using Bookstore.Shared.Exceptions;
 
@@ -10,9 +9,11 @@ namespace Bookstore.BL.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
-    public UserService(IUserRepository userRepository)
+    private readonly IRoleRepository _roleRepository;
+    public UserService(IUserRepository userRepository, IRoleRepository roleRepository)
     {
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
     }
     public async Task<UserDto> GetUserByJwt(string token)
     {
@@ -25,6 +26,15 @@ public class UserService : IUserService
             throw new BadRequestException("Пользователь не найден");
         }
 
+        var userRole = await _roleRepository.GetByIdAsync(user.RoleId);
+
+        if (userRole == null)
+        {
+            throw new BadRequestException("Возникла ошибка при получении роли пользователя");
+        }
+
+        Enum.TryParse(userRole.Name, ignoreCase: true, out UserRoleEnum userRoleName);
+
         return new UserDto
         {
             Id = user.Id,
@@ -33,7 +43,7 @@ public class UserService : IUserService
             LastName = user.LastName,
             Email = user.Email,
             MiddleName = user.MiddleName,
-            RoleId = user.RoleId,
+            RoleName = userRoleName,
         };
     }
 }
