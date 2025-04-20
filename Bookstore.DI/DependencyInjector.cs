@@ -15,7 +15,9 @@ namespace Bookstore.DI
         public static void InjectDependencies(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Default")));
+            options.UseNpgsql(configuration.GetConnectionString("Default"),
+                x => x.MigrationsAssembly("Bookstore.WebApi"))
+            );
 
             InjectRepositories(services);
             InjectServices(services);
