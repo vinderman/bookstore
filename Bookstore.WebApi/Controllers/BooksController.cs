@@ -40,14 +40,6 @@ public class BooksController : ControllerBase
         return Ok(createdBook);
     }
 
-    [HttpPost("{id}/file")]
-    public async Task<ActionResult<bool>> UploadFile([FromRoute] Guid id, [FromForm] UploadBookDto request)
-    {
-        var isUploaded = await _bookService.UploadBook(request.file, id);
-
-        return isUploaded;
-    }
-
     [HttpGet("{id}/file")]
     public async Task<ActionResult<bool>> DownloadFile([FromRoute] Guid id)
     {
@@ -56,4 +48,19 @@ public class BooksController : ControllerBase
         return File(downloadBookDto.FileContent, "application/pdf", downloadBookDto.Name);
     }
 
+    [HttpPost("{id}/file")]
+    public async Task<ActionResult<bool>> UploadFile([FromRoute] Guid id, [FromForm] UploadBookDto request)
+    {
+        var isUploaded = await _bookService.UploadBook(request.file, id);
+
+        return isUploaded;
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(Guid id)
+    {
+        await _bookService.Delete(id);
+
+        return NoContent();
+    }
 }

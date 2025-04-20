@@ -6,10 +6,10 @@ namespace Bookstore.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GenreController: ControllerBase
+public class GenresController: ControllerBase
 {
     private readonly IGenreService _genreService;
-    public GenreController(IGenreService genreService)
+    public GenresController(IGenreService genreService)
     {
         _genreService = genreService;
     }

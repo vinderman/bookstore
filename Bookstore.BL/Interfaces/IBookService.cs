@@ -13,5 +13,7 @@ namespace Bookstore.BL.Interfaces
         Task<DownloadBookDto> DownloadBook(Guid id);
         //
         Task<bool> UploadBook(IFormFile file, Guid id);
+
+        Task Delete(Guid id);
     }
 }

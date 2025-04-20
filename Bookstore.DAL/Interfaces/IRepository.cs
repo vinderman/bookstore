@@ -11,5 +11,5 @@ public interface IRepository<TEntity> where TEntity : class
     void Update(TEntity entity);
 
     void UpdateProperties(TEntity entity, params Expression<Func<TEntity, object>>[] properties);
-    void Delete(TEntity entity);
+    Task Delete(TEntity entity);
 }

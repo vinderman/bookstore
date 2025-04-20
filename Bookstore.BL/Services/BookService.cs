@@ -33,7 +33,7 @@ public class BookService : IBookService
         }
 
         return books.Select(b =>
-            new BookDto { Id = b.Id, Title = b.Name, Description = b.Description, file = GetBookFileContent(b) });
+            new BookDto { Id = b.Id, Title = b.Name, Description = b.Description, file = GetBookFileContent(b), AuthorId = b.AuthorId});
     }
 
     public async Task<BookDto> GetById(Guid id)
@@ -134,5 +134,10 @@ public class BookService : IBookService
         }
 
         return fileContent;
+    }
+
+    public async Task Delete(Guid id)
+    {
+        _bookRepository.Delete(new Book { Id = id });
     }
 }

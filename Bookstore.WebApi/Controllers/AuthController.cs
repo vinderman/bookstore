@@ -35,7 +35,7 @@ public class AuthController : ControllerBase
                 return BadRequest("Произошла ошибка. Проверьте учетные данные");
             }
 
-            return Ok(result);
+            return Ok(new SuccessResponse<AuthByLoginResponseDto>(result));
         }
         catch
         {
@@ -50,7 +50,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<bool>> Register([FromBody] RegisterDto registerDto)
     {
         var result = await _authService.Register(registerDto);
-        return Ok(result);
+        return Ok(new SuccessResponse<bool>(result));
 
     }
 
@@ -62,6 +62,6 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.RefreshToken(refreshToken);
 
-        return Ok(result);
+        return Ok(new SuccessResponse<RefreshTokenResponseDto>(result));
     }
 }

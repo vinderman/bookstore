@@ -44,7 +44,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         }
     }
 
-    public void Delete(TEntity entity)
+    public async Task Delete(TEntity entity)
     {
         _context.Set<TEntity>().Remove(entity);
     }
