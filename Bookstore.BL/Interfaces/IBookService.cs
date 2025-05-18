@@ -9,11 +9,6 @@ namespace Bookstore.BL.Interfaces
         Task<BookDto> GetById(Guid id);
         Task<BookDto> Create(CreateBookDto book);
 
-        // TODO: add format(PDF/EPUB)
-        Task<DownloadBookDto> DownloadBook(Guid id);
-        //
-        Task<bool> UploadBook(IFormFile file, Guid id);
-
         Task Delete(Guid id);
     }
 }

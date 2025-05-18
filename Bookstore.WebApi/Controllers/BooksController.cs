@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Bookstore.BL.Interfaces;
 using Bookstore.BL.Dto.Book;
+using Bookstore.BL.Dto.File;
 
 namespace Bookstore.WebApi.Controllers;
 
@@ -9,10 +10,12 @@ namespace Bookstore.WebApi.Controllers;
 public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
+    private readonly IFileService _fileService;
 
-    public BooksController(IBookService bookService)
+    public BooksController(IBookService bookService, IFileService fileService)
     {
         _bookService = bookService;
+        _fileService = fileService;
     }
 
     [HttpGet]
@@ -43,15 +46,15 @@ public class BooksController : ControllerBase
     [HttpGet("{id}/file")]
     public async Task<ActionResult<bool>> DownloadFile([FromRoute] Guid id)
     {
-        var downloadBookDto = await _bookService.DownloadBook(id);
+        var downloadBookDto = await _fileService.DownloadFile(id);
 
         return File(downloadBookDto.FileContent, "application/pdf", downloadBookDto.Name);
     }
 
     [HttpPost("{id}/file")]
-    public async Task<ActionResult<bool>> UploadFile([FromRoute] Guid id, [FromForm] UploadBookDto request)
+    public async Task<ActionResult<bool>> UploadFile([FromRoute] Guid id, [FromForm] UploadFileDto request)
     {
-        var isUploaded = await _bookService.UploadBook(request.file, id);
+        var isUploaded = await _fileService.UploadFile(request.file, id);
 
         return isUploaded;
     }

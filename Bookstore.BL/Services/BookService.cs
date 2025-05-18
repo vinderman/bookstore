@@ -32,8 +32,9 @@ public class BookService : IBookService
             return new List<BookDto>();
         }
 
+        // TODO: прокидывать информацию о связанных файлах
         return books.Select(b =>
-            new BookDto { Id = b.Id, Title = b.Name, Description = b.Description, file = GetBookFileContent(b), AuthorId = b.AuthorId});
+            new BookDto { Id = b.Id, Title = b.Name, Description = b.Description, AuthorId = b.AuthorId});
     }
 
     public async Task<BookDto> GetById(Guid id)
@@ -48,7 +49,8 @@ public class BookService : IBookService
 
 
         // TODO: Добавить маппер, прокинуть Genres
-        return new BookDto { Id = book.Id, Title = book.Name, Description = book.Description, file = GetBookFileContent(book), AuthorId = book.AuthorId };
+        // TODO: прокинуть связанные файлы
+        return new BookDto { Id = book.Id, Title = book.Name, Description = book.Description, AuthorId = book.AuthorId };
     }
 
     public async Task<BookDto> Create(CreateBookDto request)
@@ -78,62 +80,8 @@ public class BookService : IBookService
 
         return new BookDto
         {
-            Id = book.Id,
-            Title = book.Name,
-            Description = book.Description,
-            AuthorId = book.AuthorId,
+            Id = book.Id, Title = book.Name, Description = book.Description, AuthorId = book.AuthorId,
         };
-    }
-
-    public async Task<bool> UploadBook(IFormFile file, Guid id)
-    {
-        var fileId = Guid.NewGuid().ToString();
-        var fileStream = file.OpenReadStream();
-
-        await _documentRepository.UploadDocument(fileStream, fileId);
-
-
-        await _unitOfWork.BeginTransactionAsync();
-        var entity = new Book { Id = id, FileId = fileId };
-        _bookRepository.UpdateProperties(entity, e => e.FileId);
-        await _unitOfWork.CommitTransactionAsync();
-
-
-        return true;
-    }
-
-    public async Task<DownloadBookDto> DownloadBook(Guid id)
-    {
-        var book = await _bookRepository.GetByIdAsync(id);
-
-        if (book == null)
-        {
-            throw new NotFoundException($"Не найдена книга с идентификатором {id}");
-        }
-
-        if (book.FileId == null)
-        {
-            throw new NotFoundException("Не найдено прикрепленных файлов");
-        }
-
-        var file = await _documentRepository.DownloadDocument(book.FileId);
-
-        return new DownloadBookDto
-        {
-            FileContent = file,
-            Name = book.Name
-        };
-    }
-
-    public FileDto? GetBookFileContent(Book book)
-    {
-        FileDto? fileContent = null;
-        if (book.FileId != null && book.FileName != null)
-        {
-            fileContent = new FileDto { FileId = book.FileId, FileName = book.FileName, };
-        }
-
-        return fileContent;
     }
 
     public async Task Delete(Guid id)

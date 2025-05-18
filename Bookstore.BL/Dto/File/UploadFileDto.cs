@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Bookstore.BL.Dto.Book;
+namespace Bookstore.BL.Dto.File;
 
-public class UploadBookDto
+public class UploadFileDto
 {
     [Required]
     public IFormFile file { get; set; }

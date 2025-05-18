@@ -1,6 +1,7 @@
 ﻿
 using Bookstore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using File = Bookstore.DAL.Entities.File;
 
 namespace Bookstore.EF;
 
@@ -59,12 +60,6 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.FileId)
-                .HasColumnType("character varying")
-                .HasColumnName("file_id");
-            entity.Property(e => e.FileName)
-                .HasColumnType("character varying")
-                .HasColumnName("file_name");
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
@@ -153,6 +148,23 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("refresh_token");
         });
 
+        modelBuilder.Entity<File>(entity =>
+        {
+            entity.ToTable("files");
+            entity.HasKey(e => e.Id).HasName("files_pkey");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Name).HasColumnName("file_name");
+            entity.Property(e => e.FileSize).HasColumnName("file_size");
+            entity.Property(e => e.FileHash).HasColumnName("file_hash");
+            entity.Property(e => e.FileType).HasColumnName("file_type");
+            entity.Property(e => e.S3Url).HasColumnName("s3_url");
+            entity.Property(e => e.UploadedAt).HasColumnName("uploaded_at").HasColumnType("date");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 

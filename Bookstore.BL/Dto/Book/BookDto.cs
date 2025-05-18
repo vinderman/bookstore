@@ -10,8 +10,6 @@
 
         public string Description { get; set; }
 
-       public FileDto? file { get; set; }
-
         public Guid AuthorId { get; set; }
     }
 

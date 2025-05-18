@@ -37,10 +37,6 @@ namespace Bookstore.WebApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<string>("Test")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id")
                         .HasName("author_pkey");
 
@@ -65,16 +61,6 @@ namespace Bookstore.WebApi.Migrations
                         .HasColumnType("character varying(300)")
                         .HasColumnName("description");
 
-                    b.Property<string>("FileId")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying")
-                        .HasColumnName("file_id");
-
-                    b.Property<string>("FileName")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying")
-                        .HasColumnName("file_name");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -87,6 +73,54 @@ namespace Bookstore.WebApi.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("books", (string)null);
+                });
+
+            modelBuilder.Entity("Bookstore.DAL.Entities.File", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.Property<string>("FileHash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_hash");
+
+                    b.Property<int>("FileSize")
+                        .HasColumnType("integer")
+                        .HasColumnName("file_size");
+
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_type");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_name");
+
+                    b.Property<string>("S3Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("s3_url");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("uploaded_at");
+
+                    b.HasKey("Id")
+                        .HasName("files_pkey");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("files", (string)null);
                 });
 
             modelBuilder.Entity("Bookstore.DAL.Entities.Genre", b =>
@@ -219,6 +253,17 @@ namespace Bookstore.WebApi.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("Bookstore.DAL.Entities.File", b =>
+                {
+                    b.HasOne("Bookstore.DAL.Entities.Book", "Book")
+                        .WithMany("Files")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("Bookstore.DAL.Entities.User", b =>
                 {
                     b.HasOne("Bookstore.DAL.Entities.Role", "Role")
@@ -248,6 +293,11 @@ namespace Bookstore.WebApi.Migrations
             modelBuilder.Entity("Bookstore.DAL.Entities.Author", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Bookstore.DAL.Entities.Book", b =>
+                {
+                    b.Navigation("Files");
                 });
 
             modelBuilder.Entity("Bookstore.DAL.Entities.Role", b =>

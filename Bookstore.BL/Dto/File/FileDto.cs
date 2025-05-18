@@ -1,4 +1,4 @@
-﻿namespace Bookstore.BL.Dto.Book;
+﻿namespace Bookstore.BL.Dto.File;
 
 public class FileDto
 {

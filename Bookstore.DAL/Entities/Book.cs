@@ -14,12 +14,8 @@ public class Book
 
     public Guid AuthorId { get; init; }
 
-    [MaxLength(100)]
-    public string? FileId { get; init; }
-
-    [MaxLength(100)]
-    public string? FileName { get; init; }
-
     public Author Author { get; init; }
     public ICollection<Genre> Genres { get; init; } = new List<Genre>();
+
+    public ICollection<File> Files { get; init; } = new List<File>();
 }

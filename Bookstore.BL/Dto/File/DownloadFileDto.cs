@@ -1,6 +1,6 @@
-﻿namespace Bookstore.BL.Dto.Book;
+﻿namespace Bookstore.BL.Dto.File;
 
-public class DownloadBookDto
+public class DownloadFileDto
 {
     public string Name { get; set; }
 
