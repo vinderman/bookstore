@@ -1,7 +1,16 @@
 ﻿using Bookstore.DAL.Entities;
 using Bookstore.DAL.Interfaces;
 using Bookstore.EF;
+using Microsoft.EntityFrameworkCore;
+using EntityFramework = Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.DAL.Repositories;
 
-public class AuthorRepository(AppDbContext dbContext) : Repository<Author>(dbContext), IAuthorRepository;
+public class AuthorRepository(AppDbContext dbContext) : Repository<Author>(dbContext), IAuthorRepository
+{
+    private readonly AppDbContext _dbContext = dbContext;
+    public async Task<IEnumerable<Author>?> GetBySearch(string search)
+    {
+        return await _dbContext.Authors.Where(a => EntityFramework.EF.Functions.Like(a.Name.ToLower(), $"%{search.ToLower()}%")).ToListAsync();
+    }
+}

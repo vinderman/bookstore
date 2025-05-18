@@ -5,6 +5,8 @@ namespace Bookstore.BL.Interfaces
     public interface IAuthorService
     {
         //Task<BookDto> GetById(Guid id);
+
+        Task<IEnumerable<AuthorDto>> GetAuthors(string? search);
         Task<AuthorDto> Create(CreateAuthorDto book);
     }
 }

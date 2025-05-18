@@ -16,6 +16,22 @@ namespace Bookstore.BL.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<IEnumerable<AuthorDto>> GetAuthors(string? search)
+        {
+            IEnumerable<Author>? authors;
+
+            if (string.IsNullOrWhiteSpace(search))
+            {
+              authors = await _authorRepository.GetAllAsync();
+            }
+            else
+            {
+                authors = await _authorRepository.GetBySearch(search);
+            }
+
+            return authors == null ? new List<AuthorDto>() : authors.Select(a => new AuthorDto { Id = a.Id, Name = a.Name });
+        }
+
         public async Task<AuthorDto> Create(CreateAuthorDto authorDto)
         {
             var author = new Author

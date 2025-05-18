@@ -18,6 +18,13 @@ public class AuthorsController : ControllerBase
         _authorService = authorService;
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors([FromQuery(Name = "search")] string? search)
+    {
+        return Ok(await _authorService.GetAuthors(search));
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<AuthorDto>> Create(CreateAuthorDto request)

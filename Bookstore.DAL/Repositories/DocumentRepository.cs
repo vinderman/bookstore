@@ -12,7 +12,7 @@ public class DocumentRepository: IDocumentRepository
     private readonly string _bucketName = "bookstore-s3";
     private readonly string _serviceUrl = "https://hb.ru-msk.vkcloud-storage.ru";
     private readonly IConfiguration _config;
-    private readonly IAmazonS3 _s3Client;
+    private readonly AmazonS3Client _s3Client;
 
     public DocumentRepository(IConfiguration config)
     {
