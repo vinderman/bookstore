@@ -161,7 +161,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.FileHash).HasColumnName("file_hash");
             entity.Property(e => e.FileType).HasColumnName("file_type");
             entity.Property(e => e.S3Url).HasColumnName("s3_url");
-            entity.Property(e => e.UploadedAt).HasColumnName("uploaded_at").HasColumnType("date");
+            entity.Property(e => e.UploadedAt).HasColumnName("uploaded_at").HasColumnType("timestamp with time zone");
             entity.Property(e => e.BookId).HasColumnName("book_id");
 
         });

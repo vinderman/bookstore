@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Bookstore.DAL.Repositories;
 
+/// <summary>
+/// Репозиторий для работы с файловым хранилищем S3
+/// </summary>
 public class DocumentRepository: IDocumentRepository
 {
     private readonly string _bucketName = "bookstore-s3";

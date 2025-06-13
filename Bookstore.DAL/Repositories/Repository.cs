@@ -16,7 +16,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public async Task<IEnumerable<TEntity>> GetAllAsync()
     {
-        return await _context.Set<TEntity>().ToListAsync();
+        return await _context.Set<TEntity>().AsNoTracking().ToListAsync();
     }
 
     public async Task<TEntity?> GetByIdAsync(Guid id)
@@ -47,5 +47,10 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     public async Task Delete(TEntity entity)
     {
         _context.Set<TEntity>().Remove(entity);
+    }
+
+    public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+    {
+        _context.Set<TEntity>().AddRange(entities);
     }
 }

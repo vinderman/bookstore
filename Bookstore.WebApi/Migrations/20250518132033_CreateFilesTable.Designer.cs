@@ -3,6 +3,7 @@ using System;
 using Bookstore.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bookstore.WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518132033_CreateFilesTable")]
+    partial class CreateFilesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,10 +64,6 @@ namespace Bookstore.WebApi.Migrations
                         .HasColumnType("character varying(300)")
                         .HasColumnName("description");
 
-                    b.Property<string>("Isbn")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -96,8 +95,8 @@ namespace Bookstore.WebApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("file_hash");
 
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint")
+                    b.Property<int>("FileSize")
+                        .HasColumnType("integer")
                         .HasColumnName("file_size");
 
                     b.Property<string>("FileType")
@@ -116,7 +115,7 @@ namespace Bookstore.WebApi.Migrations
                         .HasColumnName("s3_url");
 
                     b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("uploaded_at");
 
                     b.HasKey("Id")

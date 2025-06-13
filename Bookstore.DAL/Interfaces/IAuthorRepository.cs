@@ -4,5 +4,8 @@ namespace Bookstore.DAL.Interfaces;
 
 public interface IAuthorRepository : IRepository<Author>
 {
-    Task<IEnumerable<Author>?> GetBySearch(string search);
+    Task<IEnumerable<Author>> GetAllBySearch(string search);
+
+
+    Task<Author?> FindBySearch(string search);
 }

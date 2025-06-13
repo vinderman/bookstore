@@ -26,7 +26,7 @@ namespace Bookstore.BL.Services
             }
             else
             {
-                authors = await _authorRepository.GetBySearch(search);
+                authors = await _authorRepository.GetAllBySearch(search);
             }
 
             return authors == null ? new List<AuthorDto>() : authors.Select(a => new AuthorDto { Id = a.Id, Name = a.Name });
@@ -39,13 +39,24 @@ namespace Bookstore.BL.Services
                 Name = authorDto.Name,
             };
 
-
-            await _unitOfWork.BeginTransactionAsync();
             await _authorRepository.AddAsync(author);
-            await _unitOfWork.CommitTransactionAsync();
+            await _unitOfWork.SaveChangesAsync();
 
 
             return new AuthorDto { Name = author.Name, Id = author.Id };
+        }
+
+        public async Task<Guid> SearchAndAddIfNotExists(string search)
+        {
+            var author = await _authorRepository.FindBySearch(search);
+
+            if (author != null)
+            {
+                return author.Id;
+            }
+
+            var newAuthor = await Create(new CreateAuthorDto { Name = search });
+            return newAuthor.Id;
         }
     }
 }

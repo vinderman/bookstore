@@ -8,5 +8,6 @@ namespace Bookstore.BL.Interfaces
 
         Task<IEnumerable<AuthorDto>> GetAuthors(string? search);
         Task<AuthorDto> Create(CreateAuthorDto book);
+        Task<Guid> SearchAndAddIfNotExists(string search);
     }
 }

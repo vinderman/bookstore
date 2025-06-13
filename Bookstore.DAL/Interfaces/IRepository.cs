@@ -12,4 +12,6 @@ public interface IRepository<TEntity> where TEntity : class
 
     void UpdateProperties(TEntity entity, params Expression<Func<TEntity, object>>[] properties);
     Task Delete(TEntity entity);
+
+    Task AddRangeAsync(IEnumerable<TEntity> entities);
 }

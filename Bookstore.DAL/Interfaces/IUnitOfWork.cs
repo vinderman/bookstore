@@ -6,6 +6,8 @@ namespace Bookstore.DAL.Interfaces
     {
         Task BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadUncommitted);
         Task CommitTransactionAsync();
+
+        Task SaveChangesAsync();
         Task RollbackTransactionAsync();
     }
 }

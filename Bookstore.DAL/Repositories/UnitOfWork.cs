@@ -20,6 +20,11 @@ namespace Bookstore.DAL.Repositories
             _transaction = await dbContext.Database.BeginTransactionAsync(isolationLevel);
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task CommitTransactionAsync()
         {
             if (_transaction == null)

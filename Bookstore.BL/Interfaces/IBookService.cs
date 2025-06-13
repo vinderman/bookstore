@@ -10,5 +10,7 @@ namespace Bookstore.BL.Interfaces
         Task<BookDto> Create(CreateBookDto book);
 
         Task Delete(Guid id);
+
+        Task ProcessBookImport(BookMetadata bookMetadata, Stream file);
     }
 }

@@ -8,7 +8,7 @@ public class File
 
     public string FileHash { get; set; } = string.Empty;
 
-    public int FileSize { get; set; } = 0;
+    public long FileSize { get; set; } = 0;
 
     public string FileType { get; set; } = string.Empty;
 

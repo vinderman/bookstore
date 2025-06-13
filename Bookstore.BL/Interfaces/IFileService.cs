@@ -9,4 +9,7 @@ public interface IFileService
     Task<DownloadFileDto> DownloadFile(Guid id);
     //
     Task<bool> UploadFile(IFormFile file, Guid id);
+
+    Task DeleteFile(Guid id);
 }
+
