@@ -1,4 +1,6 @@
-﻿namespace Bookstore.BL.Dto.Book
+﻿using Bookstore.BL.Dto.File;
+
+namespace Bookstore.BL.Dto.Book
 {
     using System;
 
@@ -10,7 +12,9 @@
 
         public string Description { get; set; }
 
-        public Guid AuthorId { get; set; }
+        public AuthorDto Author { get; set; }
+
+        public IEnumerable<FileDto> Files { get; set; }
     }
 
 }

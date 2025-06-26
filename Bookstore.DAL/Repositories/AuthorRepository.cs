@@ -14,6 +14,11 @@ public class AuthorRepository(AppDbContext dbContext) : Repository<Author>(dbCon
         return await _dbContext.Authors.Where(a => EntityFramework.EF.Functions.Like(a.Name.ToLower(), $"%{search.ToLower()}%")).ToListAsync();
     }
 
+    public async Task<IEnumerable<Author>> GetAllByIds(IEnumerable<Guid> authorIds)
+    {
+        return await _dbContext.Authors.AsNoTracking().Where(a => authorIds.Contains(a.Id)).ToListAsync();
+    }
+
     public async Task<Author?> FindBySearch(string search)
     {
         return await _dbContext.Authors.Where(a => EntityFramework.EF.Functions.Like(a.Name.ToLower(), $"%{search.ToLower()}%")).FirstOrDefaultAsync();

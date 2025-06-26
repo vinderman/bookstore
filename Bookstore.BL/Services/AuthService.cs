@@ -98,56 +98,46 @@ namespace Bookstore.BL.Services
 
         public async Task<RefreshTokenResponseDto> RefreshToken(string refreshToken)
         {
-            try
+            var tokenDetails = new JwtSecurityTokenHandler().ReadJwtToken(refreshToken);
+            var expiration = tokenDetails.ValidTo;
+
+            var compareResult = DateTime.Compare(DateTime.Now, expiration);
+            Console.WriteLine($"{compareResult} COMPARE RESULT");
+            if (compareResult > 0)
             {
-                var tokenDetails = new JwtSecurityTokenHandler().ReadJwtToken(refreshToken);
-                var expiration = tokenDetails.ValidTo;
+                throw new BadRequestException("Время жизни токена истекло");
+            }
 
-                var compareResult = DateTime.Compare(DateTime.Now, expiration);
-                if (compareResult > 0)
-                {
-                    throw new BadRequestException("Время жизни токена истекло");
-                }
+            var existingToken = await _userRefreshTokenRepository.FindAsync(refreshToken);
 
+            if (existingToken != null)
+            {
                 await _unitOfWork.BeginTransactionAsync();
+                var result = await ProcessRefreshToken(existingToken.RefreshToken);
+                _userRefreshTokenRepository.Delete(existingToken);
+                await _userRefreshTokenRepository.AddAsync(new UsersRefreshToken { RefreshToken = result.RefreshToken });
+                await _unitOfWork.CommitTransactionAsync();
 
-                var existingToken = await _userRefreshTokenRepository.FindAsync(refreshToken);
-
-                if (existingToken != null)
-                {
-                    var result = await ProcessRefreshToken(existingToken.RefreshToken);
-                    _userRefreshTokenRepository.Delete(existingToken);
-                    await _userRefreshTokenRepository.AddAsync(new UsersRefreshToken { RefreshToken = result.RefreshToken });
-
-                    await _unitOfWork.CommitTransactionAsync();
-                    return result;
-                }
-                else
-                {
-                    throw new BadRequestException("Токен не валиден");
-                }
-            }
-            catch
-            {
-                await _unitOfWork.RollbackTransactionAsync();
-                throw;
+                return result;
             }
 
+            throw new BadRequestException("Токен не валиден");
         }
 
         public async Task RemoveExpiredRefreshTokens()
         {
             var tokens = await _userRefreshTokenRepository.GetAllAsync();
 
-            tokens?.ToList().ForEach(x =>
+            foreach (var token in tokens)
             {
-                var expiresAt = new JwtSecurityTokenHandler().ReadJwtToken(x.RefreshToken).ValidTo;
+                var expiresAt = new JwtSecurityTokenHandler().ReadJwtToken(token.RefreshToken).ValidTo;
 
                 if (expiresAt < DateTime.Now)
                 {
-                    _userRefreshTokenRepository.Delete(x);
+                    await _userRefreshTokenRepository.Delete(token);
+                    await _unitOfWork.SaveChangesAsync();
                 }
-            });
+            }
         }
         private string GenerateAccessToken(User user)
         {

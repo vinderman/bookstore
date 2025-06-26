@@ -51,7 +51,7 @@ public class BookImporterBackgroundService(IServiceProvider serviceProvider): Ba
             }
         }
 
-        await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken);
+        await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken stoppingToken)
