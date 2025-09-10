@@ -9,6 +9,7 @@ using Bookstore.DAL.Interfaces;
 using Bookstore.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
 using File = Bookstore.DAL.Entities.File;
+using IMapper = AutoMapper.IMapper;
 
 namespace Bookstore.BL.Services;
 
@@ -21,7 +22,17 @@ public class BookService : IBookService
     private readonly IFileService _fileService;
     private readonly IFileRepository _fileRepository;
     private readonly IAuthorService _authorService;
-    public BookService(IBookRepository bookRepository, IUnitOfWork unitOfWork, IFileService fileService, IGenreRepository genreRepository, IAuthorRepository authorRepository, IAuthorService authorService, IFileRepository fileRepository)
+    private readonly IMapper _mapper;
+    public BookService(
+        IBookRepository bookRepository,
+        IUnitOfWork unitOfWork,
+        IFileService fileService,
+        IGenreRepository genreRepository,
+        IAuthorRepository authorRepository,
+        IAuthorService authorService,
+        IFileRepository fileRepository,
+        IMapper mapper
+        )
     {
         _bookRepository = bookRepository;
         _unitOfWork = unitOfWork;
@@ -30,6 +41,7 @@ public class BookService : IBookService
         _fileService = fileService;
         _authorService = authorService;
         _fileRepository = fileRepository;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<BookDto>> GetBooks()
@@ -62,29 +74,14 @@ public class BookService : IBookService
             }
 
             var correspondingFile = files.FirstOrDefault(f => f.BookId == b.Id);
-            var filesDto = new List<FileDto>();
+
+            b.Author = correspondingAuthor;
             if (correspondingFile != null)
             {
-                filesDto.Add(new FileDto
-                {
-                    Id = correspondingFile.Id,
-                    Name = correspondingFile.Name,
-                    Size = correspondingFile.FileSize,
-                    Extension = correspondingFile.FileType
-                });
+                b.Files = new List<File> { correspondingFile };
             }
 
-
-            {
-                return new BookDto
-                {
-                    Id = b.Id,
-                    Title = b.Name,
-                    Description = b.Description,
-                    Author = new AuthorDto { Name = correspondingAuthor.Name, Id = correspondingAuthor.Id },
-                    Files = filesDto
-                };
-            }
+            return _mapper.Map<BookDto>(b);
         });
     }
 
@@ -106,15 +103,10 @@ public class BookService : IBookService
 
         var files = await _fileRepository.GetByBookIdAsync(book.Id);
 
+        book.Author = author;
+        book.Files = files.ToList();
 
-        return new BookDto
-        {
-            Id = book.Id,
-            Title = book.Name,
-            Description = book.Description,
-            Author = new AuthorDto { Id = author.Id, Name = author.Name },
-            Files = files.Select(f => new FileDto { Id = f.Id, Name = f.Name, Size = f.FileSize, Extension = f.FileType })
-        };
+        return _mapper.Map<BookDto>(book);
     }
 
     public async Task<BookDto> Create(CreateBookDto request)
@@ -146,11 +138,9 @@ public class BookService : IBookService
         }
         await _unitOfWork.CommitTransactionAsync();
 
+        book.Author = author;
 
-        return new BookDto
-        {
-            Id = book.Id, Title = book.Name, Description = book.Description, Author = new AuthorDto { Id = author.Id, Name = author.Name }
-        };
+        return _mapper.Map<BookDto>(book);
     }
 
     /// <summary>

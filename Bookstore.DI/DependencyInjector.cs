@@ -1,5 +1,6 @@
 ﻿using Bookstore.BL.BackgroundServices;
 using Bookstore.BL.Interfaces;
+using Bookstore.BL.Mapper;
 using Bookstore.BL.Services;
 using Bookstore.EF;
 using Bookstore.DAL.Repositories;
@@ -18,6 +19,8 @@ namespace Bookstore.DI
             options.UseNpgsql(configuration.GetConnectionString("Default"),
                 x => x.MigrationsAssembly("Bookstore.WebApi"))
             );
+
+            services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 
             InjectRepositories(services);
             InjectServices(services);

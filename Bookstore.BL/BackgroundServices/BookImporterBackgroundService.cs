@@ -4,8 +4,6 @@ using Bookstore.BL.Dto.Book;
 using Bookstore.BL.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using iText.Kernel.Pdf;
-using iText.Kernel.Pdf.Canvas.Parser;
 
 namespace Bookstore.BL.BackgroundServices;
 
