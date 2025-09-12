@@ -30,6 +30,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<UsersRefreshToken> UsersRefreshTokens { get; set; }
 
+    public virtual DbSet<ImageProcessingTask> ImageProcessingTask { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:Default");
 

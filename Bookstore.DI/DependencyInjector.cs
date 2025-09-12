@@ -24,8 +24,9 @@ namespace Bookstore.DI
 
             InjectRepositories(services);
             InjectServices(services);
-            services.AddHostedService<RefreshTokenBackgroundService>();
-            services.AddHostedService<BookImporterBackgroundService>();
+            // services.AddHostedService<RefreshTokenBackgroundService>();
+            // services.AddHostedService<BookImporterBackgroundService>();
+            services.AddHostedService<ImageProcessingBackgroundService>();
         }
 
         private static void InjectRepositories(IServiceCollection services)
@@ -50,6 +51,7 @@ namespace Bookstore.DI
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IImageProcessorService, ImageProcessorService>();
         }
     }
 }

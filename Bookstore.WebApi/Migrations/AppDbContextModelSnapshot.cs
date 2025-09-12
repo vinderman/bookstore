@@ -145,6 +145,34 @@ namespace Bookstore.WebApi.Migrations
                     b.ToTable("genres", (string)null);
                 });
 
+            modelBuilder.Entity("Bookstore.DAL.Entities.ImageProcessingTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OriginalImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProcessedImagePath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImageProcessingTask");
+                });
+
             modelBuilder.Entity("Bookstore.DAL.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
